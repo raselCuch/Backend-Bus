@@ -6,11 +6,11 @@ const { generarJWT } = require("../helpers/generar-jwt");
 
 
 const login = async (req=request, res=response) => {
-    const {correo, password} = req.body;
+    const {username, password} = req.body;
 
     try {
         //Verificar si el email existe
-        const usuario = await  Usuario.findOne({correo});
+        const usuario = await  Usuario.findOne({username});
         if(!usuario){
             return res.status(400).json({
                 msg:'Usuario / Password no son correcto - correo'
@@ -19,12 +19,12 @@ const login = async (req=request, res=response) => {
       
         //verificar la contrasena
 
-        // const validPassword = bcryptjs.compareSync(password, usuario.password);
-        // if(!validPassword){
-        //     return res.status(400).json({
-        //         msg:'Usuario / Password no son correcto - password'
-        //     })
-        // }
+        const validPassword = bcryptjs.compareSync(password, usuario.password);
+        if(!validPassword){
+            return res.status(400).json({
+                msg:'Usuario / Password no son correcto - password'
+            })
+        }
         //Generar el JWT
         const token = await generarJWT( usuario.id);
 
