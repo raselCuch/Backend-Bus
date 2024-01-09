@@ -3,9 +3,10 @@ const {Router} = require('express');
 const { usuariosGet,
         usuariosPut, 
         usuariosPost, 
-        usuariosDelete 
+        usuariosDelete
          } = require('../controllers');
 
+    
 
 
 const router= Router();

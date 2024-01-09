@@ -1,10 +1,6 @@
 const { Schema, model } = require('mongoose');
 
 const AsientoSchema = new Schema({
-  idAsiento: {
-    type: String,
-    required: true,
-  },
   correlativo: {
     type: String,
     required: true,
@@ -12,15 +8,9 @@ const AsientoSchema = new Schema({
 });
 
 const BusSchema = new Schema({
-  id: {
-    type: String,
-    required: [true, 'El ID es obligatorio'],
-    unique: true,
-  },
   placa: {
     type: String,
     required: [true, 'La placa es obligatoria'],
-    unique: true,
   },
   marca: {
     type: String,
@@ -35,5 +25,11 @@ const BusSchema = new Schema({
     required: true,
   },
 });
+
+BusSchema.methods.toJSON = function() {
+  const {__v, _id, ...bus} = this.toObject();
+  bus.uid= _id;
+  return bus;
+}
 
 module.exports = model('Bus', BusSchema);
