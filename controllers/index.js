@@ -1,3 +1,4 @@
+//simplifica las rutas
 const auth = require('./auth');
 // const categorias = require('./categorias');
 const usuarios= require('./usuarios');
