@@ -20,7 +20,7 @@ const choferPost = async (req, res) => {
     let { dni, nombre, fechaIngreso } = req.body;
 
     const choferEncontrado = await Chofer.findOne({ dni });
-    //el error 404 es cuando no se encuentra el parametro
+ 
     if (choferEncontrado) {
       return res.status(404).json({
         success: false,
@@ -47,18 +47,27 @@ const choferPost = async (req, res) => {
 
 const choferPut = async (req, res = response) => {
   try {
-    // Obtener el id del chofer de req.params o req.body según tu implementación
-    const { id } = req.params;
+  
     // Obtener los datos actualizados del chofer de req.body
-    const { nombre, fechaIngreso } = req.body;
+    const { id, nombre, dni, fechaIngreso } = req.body;
+
+    const choferEncontrado = await Chofer.findOne({ dni });
+
+    if(choferEncontrado !==null && choferEncontrado?.id !== id ){
+      res.status(400).json({
+        success: true,
+        message: 'El dni que ingreso ya existe',
+      });
+    }
 
     // Actualizar el chofer en la base de datos
-    await Chofer.findByIdAndUpdate(id, { nombre, fechaIngreso });
+    await Chofer.findByIdAndUpdate(id, { nombre, dni, fechaIngreso });
 
     res.status(200).json({
       success: true,
       message: 'Se modificó el chofer correctamente',
     });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({
