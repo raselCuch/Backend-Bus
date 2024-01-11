@@ -13,6 +13,7 @@ class Server{
             usuarios:'/api/usuarios',
             buses:'/api/buses',
             choferes:'/api/chofer',
+            itinerario:'/api/itinerario'
 
         }
         
@@ -38,11 +39,11 @@ class Server{
 
     routes(){
         this.app.use(this.paths.auth, require('../routes/auth'));
-        
+
         this.app.use(this.paths.usuarios, require('../routes/usuarios'));
         this.app.use(this.paths.buses, require('../routes/bus'));
         this.app.use(this.paths.choferes,require('../routes/chofer'));
-        
+        this.app.use(this.paths.itinerario, require('../routes/itinerario'));
     }
 
     listen(){
