@@ -1,13 +1,12 @@
 //simplifica las rutas
 const auth = require('./auth');
-// const categorias = require('./categorias');
 const usuarios= require('./usuarios');
 const bus= require('./bus');
-// const productos= require('./productos');
+const chofer = require('./chofer')
 module.exports={
     ...auth,
-    // ...categorias,
     ...usuarios,
     ...bus,
-    // ...productos
+    ...chofer
+
 }
