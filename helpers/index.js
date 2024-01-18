@@ -1,8 +1,5 @@
+const generarJWT = require("./generar-jwt");
 
-
-const generarJWT= require('./generar-jwt');
-
-
-module.exports={
-    ...generarJWT,
-}
+module.exports = {
+  ...generarJWT,
+};

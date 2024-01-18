@@ -1,56 +1,59 @@
-const express = require('express')
-const cors= require('cors');
-const { dbConnection } = require('../database/config');
-const fileUpload = require('express-fileupload');
-class Server{
+const express = require("express"); //para crear la aplicación
+const cors = require("cors");
+const { dbConnection } = require("../database/config");
+// const fileUpload = require("express-fileupload");//manejar la carga de archivos
 
-    constructor(){
-        this.app= express(); 
-        this.port=process.env.PORT;
-        this.paths ={
-            auth:'/api/auth',
-            buscar:'/api/buscar',
-            usuarios:'/api/usuarios',
-            buses:'/api/buses',
-            choferes:'/api/chofer',
-            itinerario:'/api/itinerario'
+class Server {
+  //configurar el servidor.
+  constructor() {
+    this.app = express();
+    this.port = process.env.PORT;
+    this.paths = {
+      auth: "/api/auth",
+      buscar: "/api/buscar",
+      usuarios: "/api/usuarios",
+      buses: "/api/buses",
+      choferes: "/api/chofer",
+      itinerario: "/api/itinerario",
+    };
 
-        }
-        
-        //Conectar a base de datos
-        this.conectarDB();
-        //Middlewares
-        this.middlewares();
-        //Rutas de mi aplicacion
-        this.routes();
-    }
+    //conexión a la base de datos
+    this.conectarDB();
+    //configuración de middlewares
+    this.middlewares();
+    //configuración de rutas
+    this.routes();
+  }
 
-    async conectarDB(){
-        await dbConnection();
-    }
+  async conectarDB() {
+    await dbConnection(); //establecer conexión a base de datos en "../database/config "
+  }
 
-    middlewares(){
-        //CORS
-        this.app.use( cors());
+  //configura los middlewares para la aplicación Express
+  middlewares() {
+    //CORS
+    this.app.use(cors()); //manejar la política
 
-        //Lectura y parseo del codigo
-        this.app.use(express.json());
-    }
+    //Lectura y parseo del codigo
+    this.app.use(express.json()); //permitir la lectura y el parseo del cuerpo de las solicitudes en formato JSON
+  }
 
-    routes(){
-        this.app.use(this.paths.auth, require('../routes/auth'));
+  routes() {
+    //configura rutas para la aplicación Express
+    this.app.use(this.paths.auth, require("../routes/auth"));
 
-        this.app.use(this.paths.usuarios, require('../routes/usuarios'));
-        this.app.use(this.paths.buses, require('../routes/bus'));
-        this.app.use(this.paths.choferes,require('../routes/chofer'));
-        this.app.use(this.paths.itinerario, require('../routes/itinerario'));
-    }
+    this.app.use(this.paths.usuarios, require("../routes/usuariosRouter"));
+    this.app.use(this.paths.buses, require("../routes/busRouter"));
+    this.app.use(this.paths.choferes, require("../routes/choferRouter"));
+    this.app.use(this.paths.itinerario, require("../routes/itinerarioRouter"));
+  }
 
-    listen(){
-        this.app.listen(this.port, ()=>{
-            console.log('Servidor corriendo en puerto', this.port)
-        });
-    }
+  listen() {
+    //inicia el servidor y escuchar en el puerto "port"
+    this.app.listen(this.port, () => {
+      console.log("Servidor corriendo en puerto", this.port);
+    });
+  }
 }
 
-module.exports= Server;
+module.exports = Server; //Exporta la clase Server

@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const DetalleSchema = new Schema({
   idAsiento: {
@@ -18,15 +18,15 @@ const DetalleSchema = new Schema({
 const ItinerarioSchema = new Schema({
   idBus: {
     type: String,
-    required: [true, 'El ID del bus es obligatorio'],
+    required: [true, "El ID del bus es obligatorio"],
   },
   fechaViaje: {
     type: Date,
-    required: [true, 'La fecha de viaje es obligatoria'],
+    required: [true, "La fecha de viaje es obligatoria"],
   },
   idChofer: {
     type: String,
-    required: [true, 'El ID del chofer es obligatorio'],
+    required: [true, "El ID del chofer es obligatorio"],
   },
   detalle: {
     type: [DetalleSchema],
@@ -34,4 +34,4 @@ const ItinerarioSchema = new Schema({
   },
 });
 
-module.exports = model('Itinerario', ItinerarioSchema);
+module.exports = model("Itinerario", ItinerarioSchema);
