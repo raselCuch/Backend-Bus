@@ -40,4 +40,4 @@ BusSchema.methods.toJSON = function () {
   return bus; //devuelve objeto modificado
 };
 
-module.exports = model("Bus", BusSchema); //Exporta el modelo creado como "Bus"
+module.exports = model("dbBus", BusSchema); //Exporta el modelo creado como "Bus"

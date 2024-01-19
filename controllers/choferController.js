@@ -10,10 +10,13 @@ const { ObjectId } = require("mongodb");
 // 200 OK: solicitud exitosa.
 // 201 Created: creación exitosa de recurso
 
+// 500 Internal Server Error
+
+//obtener todos
 const choferGet = async (req = request, res = response) => {
   try {
-    const choferes = await Chofer.find();
-    res.json(choferes);
+    const allChofer = await Chofer.find();
+    res.json(allChofer);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -22,13 +25,15 @@ const choferGet = async (req = request, res = response) => {
     });
   }
 };
+
+//obtener por id
 const choferGetByID = async (req = request, res = response) => {
   try {
-    const { id } = req.params; // Obtener el ID del parámetro de la URL
+    const { id } = req.params;
     const chofer = await Chofer.findById(id);
 
-    if (!chofer) {
-      return res.status(404).json({
+    if (!chofer) {//si no se encontró
+      return res.status(404).json({//Not Found
         success: false,
         message: "Chofer no encontrado",
       });
@@ -47,13 +52,14 @@ const choferGetByID = async (req = request, res = response) => {
   }
 };
 
+//crear chofer
 const choferPost = async (req, res) => {
   try {
     let { dni, nombre, fechaIngreso } = req.body;
 
     const choferEncontrado = await Chofer.findOne({ dni });
 
-    if (choferEncontrado) {
+    if (choferEncontrado) {//si DNI duplicado
       return res.status(404).json({
         success: false,
         message: "El número de DNI ya existe",
@@ -63,7 +69,6 @@ const choferPost = async (req, res) => {
     const chofer = new Chofer({ dni, nombre, fechaIngreso });
 
     await chofer.save();
-    //el error 201 confirma la solicitud completada
     res.status(201).json({
       success: true,
       message: "Se registró el chofer correctamente",
@@ -77,14 +82,16 @@ const choferPost = async (req, res) => {
   }
 };
 
+//editar chofer
 const choferPut = async (req, res = response) => {
   try {
     // Obtener los datos actualizados del chofer de req.body
     const { id, nombre, dni, fechaIngreso } = req.body;
 
-    const choferEncontrado = await Chofer.findOne({ dni });
+    const choferEncontrado = await Chofer.findOne({ dni });//buscar un documento en la colección
 
     if (choferEncontrado !== null && choferEncontrado?.id !== id) {
+      //se encontró chofer con diferente identificador
       res.status(400).json({
         success: true,
         message: "El dni que ingreso ya existe",
@@ -102,16 +109,17 @@ const choferPut = async (req, res = response) => {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Error al modificar el chofer",
+      message: "Error al editar el chofer",
     });
   }
 };
 
+//elimina chofer
 const choferDelete = async (req, res) => {
   try {
-    // Obtener el id del chofer de req.params o req.body según tu implementación
     const { id } = req.params;
-    // Eliminar el chofer de la base de datos
+    
+    //elimina
     await Chofer.findByIdAndDelete(id);
 
     res.json({

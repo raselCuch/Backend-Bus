@@ -1,48 +1,62 @@
 const { response, request } = require("express");
+// express: framework web para Node.js que simplifica el desarrollo de aplicaciones
 const Bus = require("../models/busModel");
 const { ObjectId } = require("mongodb"); // Importa ObjectId de mongodb
 
+// obtener todos los buses
 const busGet = async (req = request, res = response) => {
   const buses = await Bus.find();
-  res.json(buses);
+  res.json(buses); //responde un array de autobuses en JSON
 };
 
+// obtener un bus por ID
 const busGetId = async (req = request, res = response) => {
+  //En Express, los parámetros de la URL se encuentran en req.params
   try {
-    const { _id } = req.params; // Cambia req.body por req.params para obtener el _id desde los parámetros de la URL
-    const bus = await Bus.findById(_id); // Utiliza findById para buscar el autobús por su _id
+    // const { _id } = req.params; // Cambia req.body por req.params para obtener el _id desde los parámetros de la URL
+    const { id } = req.params; // desestructuración de objetos para extraer el valor "_id"
+    const bus = await Bus.findById(id); // buscar bus por  "_id"
 
     if (!bus) {
-        // Si no se hay autobús, código 404
+      //si no se encuentra
       return res.status(404).json({
-        success: false,
-        message: "Autobús no encontrado",
+        //404 "Not Found"
+        //tiene return porque termino anormalamente
+        success: false, // indica si operación fue exitosa o no
+        message: "Bus no encontrado",
       });
     }
 
-    // Si se encuentra el autobús, responde con la información del autobús
+    // Si se encuentra
     res.json({
+      //no tiene return porque después de enviar respuesta, la función completará con normalidad
       success: true,
-      bus,
+      bus, //responde la información del bus
     });
   } catch (error) {
     // Manejo de errores: Log del error y respuesta con código 500
     console.error(error);
     res.status(500).json({
+      // 500 Internal Server Error
       success: false,
       message: "Error en el servidor",
     });
   }
 };
 
+// crear bus
 const busPost = async (req, res) => {
   try {
-    let { placa, marca, modelo, asientos } = req.body;
+    //las variables cambiaran su valor
+    let { placa, marca, modelo, asientos } = req.body; // utiliza info del cuerpo de la solicitud req.body
 
+    //la variable no cambiará su valor
     const placaEncontrada = await Bus.find({ placa });
 
     if (placaEncontrada.length > 0)
+      //si hay más de una
       return res.status(404).json({
+        //
         success: false,
         message: "El numero de placa ya existe",
       });
@@ -51,17 +65,21 @@ const busPost = async (req, res) => {
     asientos = [];
 
     for (i = 1; i <= cantidad; i++) {
-      asientos.push({//generar y agregar objetos
-        idAsiento: new ObjectId(),//crea un nuevo, identificador único de asiento
+      // llena de asientos el array "asientos"
+      asientos.push({
+        //generar y agregar objetos
+        idAsiento: new ObjectId(), //crea un nuevo identificador único de asiento
         correlativo: i,
       });
     }
 
     const bus = new Bus({ placa, marca, modelo, asientos });
 
-    await bus.save();
+    await bus.save(); //método de Mongoose
+    //operacion asíncronas
 
     res.status(201).json({
+      //201 Created
       success: true,
       message: "Se registro correctamente",
     });
@@ -70,49 +88,59 @@ const busPost = async (req, res) => {
   }
 };
 
+// edita bus
 const busPut = async (req, res = response) => {
   try {
+    // req.params -> acceder a parámetros de la URL
     const { id } = req.params; // Obtener el _id del autobús desde los parámetros de la URL
+
+    //req.body -> acceder a datos del cuerpo de la solicitud HTTP,
     const { placa, marca, modelo, asientos } = req.body; // Obtener los datos actualizados del autobús de req.body
 
     // Verificar si el autobús existe
-    const busExistente = await Bus.findById(id);
-    if (!busExistente) {
+    const busVerificado = await Bus.findById(id);
+
+    if (!busVerificado) {
+      //no existe
       return res.status(404).json({
+        //404 Not Found
         success: false,
         message: "Autobús no encontrado",
       });
     }
 
-    // Actualizar el autobús en la base de datos
-    busExistente.placa = placa;
-    busExistente.marca = marca;
-    busExistente.modelo = modelo;
-    busExistente.asientos = []; // Puedes ajustar esta parte según tu lógica
+    // edita datos
+    busVerificado.placa = placa;
+    busVerificado.marca = marca;
+    busVerificado.modelo = modelo;
+    busVerificado.asientos = []; // array a cero
 
     for (let i = 1; i <= asientos; i++) {
-      busExistente.asientos.push({
-        idAsiento: new ObjectId(),
+      //volvemos a generar los asientos
+      busVerificado.asientos.push({
+        idAsiento: new ObjectId(), //ObjectId proviene de Mongoose
         correlativo: i,
       });
     }
 
-    await busExistente.save();
+    await busVerificado.save(); //guarda cambios
 
     res.status(200).json({
+      //200 OK
       success: true,
       message: "Se modificó el autobús correctamente",
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
+      // 500 Internal Server Error
       success: false,
       message: "Error en el servidor",
     });
   }
 };
 
-//metodo que sirve para eliminar un asiento
+// eliminar bus por id
 const busDelete = async (req, res) => {
   try {
     const { id } = req.params; // Obtener el _id del autobús desde los parámetros de la URL
@@ -126,27 +154,30 @@ const busDelete = async (req, res) => {
       });
     }
 
-    // Eliminar el autobús de la base de datos
+    // busca y elimina el bus
     await Bus.findByIdAndDelete(id);
 
     res.json({
+      //devuelve respuesta
       success: true,
       message: "Se eliminó el autobús correctamente",
     });
   } catch (error) {
-    console.log(error);
+    console.log(error); //imprime en consola el error
     res.status(500).json({
+      //500 Internal Server Error
       success: false,
       message: "Error en el servidor",
     });
   }
 };
+
 const busDeleteAsientos = async (req, res) => {
   try {
-    const { id } = req.params; // Obtener el _id del autobús desde los parámetros de la URL
-    const { idAsientos } = req.body; // Obtener los identificadores de los asientos a eliminar desde req.body
+    const { id } = req.params;
+    const { idAsientos } = req.body;
 
-    // Verificar si el autobús existe
+    // verificar si bus existe
     const busExistente = await Bus.findById(id);
     if (!busExistente) {
       return res.status(404).json({
@@ -156,7 +187,7 @@ const busDeleteAsientos = async (req, res) => {
     }
 
     // Filtrar los asientos a eliminar
-    const asientosFiltrados = busExistente.asientos.filter(
+    const asientosFiltrados = busExistente.asientos.filter(// función de filtro
       (asiento) => !idAsientos.includes(asiento.idAsiento.toString())
     );
 
@@ -172,6 +203,7 @@ const busDeleteAsientos = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
+      //  500 Internal Server Error
       success: false,
       message: "Error en el servidor",
     });
