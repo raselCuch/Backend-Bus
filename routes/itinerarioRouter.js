@@ -1,6 +1,7 @@
 const { Router } = require("express");
 
 const {
+  getItinerario,
   crearItinerario,
   asignarChofer,
   buscarItinerario,
@@ -12,15 +13,17 @@ const {
 
 const router = Router();
 
-router.get("/", buscarPasajero);
-
+router.get("/", getItinerario);
+router.get("/fecha/", buscarItinerario);
 router.post("/", crearItinerario);
-router.post("/", asignarChofer);
-router.post("/", registrarPasajero);
+// router.get("/", buscarPasajero);
 
-router.put("/", buscarItinerario);
-router.put("/", editarPasajero);
+router.put("/asignar-chofer/", asignarChofer);
 
-router.delete("/", eliminarPasajero);
+// router.get("/", buscarPasajero);
+router.get("/pasajero/", buscarPasajero);//
+router.post("/pasajero/", registrarPasajero);//
+router.put("/pasajero/", editarPasajero);
+router.delete("/pasajero/", eliminarPasajero);
 
 module.exports = router;

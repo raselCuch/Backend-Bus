@@ -26,11 +26,13 @@ const ItinerarioSchema = new Schema({
   },
   idChofer: {
     type: String,
-    required: [true, "El ID del chofer es obligatorio"],
+    // required: [true, "El ID del chofer es obligatorio"],
+    required: false,
   },
   detalle: {
     type: [DetalleSchema],
-    required: true,
+    required: false,
+    // required: true,
   },
 });
 

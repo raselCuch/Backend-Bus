@@ -39,10 +39,13 @@ const choferGetByID = async (req = request, res = response) => {
       });
     }
 
-    res.json({
-      success: true,
-      chofer,
-    });
+    // res.json({
+    //   success: true,
+    //   chofer,
+    // });
+
+    res.json(chofer);
+    
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -86,7 +89,9 @@ const choferPost = async (req, res) => {
 const choferPut = async (req, res = response) => {
   try {
     // Obtener los datos actualizados del chofer de req.body
-    const { id, nombre, dni, fechaIngreso } = req.body;
+    // const { id, nombre, dni, fechaIngreso } = req.body;
+    const { id } = req.params;
+    const { nombre, dni, fechaIngreso } = req.body;
 
     const choferEncontrado = await Chofer.findOne({ dni });//buscar un documento en la colección
 
@@ -118,7 +123,6 @@ const choferPut = async (req, res = response) => {
 const choferDelete = async (req, res) => {
   try {
     const { id } = req.params;
-    
     //elimina
     await Chofer.findByIdAndDelete(id);
 

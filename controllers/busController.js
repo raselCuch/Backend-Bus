@@ -5,8 +5,16 @@ const { ObjectId } = require("mongodb"); // Importa ObjectId de mongodb
 
 // obtener todos los buses
 const busGet = async (req = request, res = response) => {
-  const buses = await Bus.find();
-  res.json(buses); //responde un array de autobuses en JSON
+  try {
+    const allBuses = await Bus.find();
+    res.json(allBuses); //responde un array de autobuses en JSON
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error en el servidor",
+    });
+  }
 };
 
 // obtener un bus por ID
@@ -28,11 +36,11 @@ const busGetId = async (req = request, res = response) => {
     }
 
     // Si se encuentra
-    res.json({
-      //no tiene return porque después de enviar respuesta, la función completará con normalidad
-      success: true,
-      bus, //responde la información del bus
-    });
+    // res.json({
+    //   bus,
+    //   success: true,
+    // });
+    res.json(bus);
   } catch (error) {
     // Manejo de errores: Log del error y respuesta con código 500
     console.error(error);
@@ -187,7 +195,8 @@ const busDeleteAsientos = async (req, res) => {
     }
 
     // Filtrar los asientos a eliminar
-    const asientosFiltrados = busExistente.asientos.filter(// función de filtro
+    const asientosFiltrados = busExistente.asientos.filter(
+      // función de filtro
       (asiento) => !idAsientos.includes(asiento.idAsiento.toString())
     );
 

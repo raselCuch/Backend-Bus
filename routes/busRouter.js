@@ -11,8 +11,8 @@ const {
 
 const router = Router();
 
-router.get("/:id", busGetId);//obtener uno
 router.get("/", busGet);//obtener todo
+router.get("/:id", busGetId);//obtener uno
 
 router.put("/:id", busPut);//editar
 

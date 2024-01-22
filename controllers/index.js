@@ -1,5 +1,4 @@
 //simplificación de rutas
-
 //import's de controladores
 const auth = require("./auth");
 const usuarios = require("./usuariosController");
